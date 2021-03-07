@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <springProperty name="app" source="spring.application.name"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <springProfile name="default, heroku">
+        <!-- localhost only, no json -->
+        <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
+    <springProfile name="dev, tst, prd">
+        <!-- json configuration to be enabled when the dev, tst, prd profiles are active -->
+        <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            </encoder>
+        </appender>
+    </springProfile>
+
+
+    <logger name="org.springframework.boot" level="ERROR"/>
+    <logger name="org.mongodb.driver" level="ERROR"/>
+
+    <root level="info">
+        <appender-ref ref="consoleAppender"/>
+    </root>
+
+</configuration>
