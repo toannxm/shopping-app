@@ -1,8 +1,10 @@
 package app.shopping.interceptor;
 
 import app.shopping.entity.dto.ResponseError;
+import app.shopping.rest.exception.LoginFailedException;
 import app.shopping.rest.exception.ResourceAlreadyExistsException;
 import app.shopping.rest.exception.ResourceNotFoundException;
+import app.shopping.rest.exception.UsernameNotFound;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -37,5 +39,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleUnExpectation(RuntimeException ex, WebRequest request) {
         ResponseError responseError = new ResponseError(messageSource.getMessage("internal_server_error", null, Locale.US), ex.getMessage());
         return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({ LoginFailedException.class })
+    public ResponseEntity<Object> handleAccessDeniedException(
+            Exception ex, WebRequest request) {
+        ResponseError responseError = new ResponseError(messageSource.getMessage("authenticate_failed", null, Locale.US), ex.getMessage());
+        return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+
+    }
+    @ExceptionHandler({ UsernameNotFound.class })
+    public ResponseEntity<Object> handleUsernameNotFound(
+            Exception ex, WebRequest request) {
+        ResponseError responseError = new ResponseError(messageSource.getMessage("resource.username_not_fount", null, Locale.US), ex.getMessage());
+        return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+
     }
 }

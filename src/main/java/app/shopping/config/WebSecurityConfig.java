@@ -53,15 +53,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.cors();
-        httpSecurity.csrf().disable()
+        httpSecurity
                 .authorizeRequests()
-                .antMatchers("/**").permitAll().and()
+                .antMatchers("/api/authenticate").permitAll()
+                .anyRequest().authenticated().and()
+                .cors()
+                .and()
                 // don't authenticate this particular request
                 // make sure we use stateless session; session won't be used to
                 // store user's state.
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .csrf()
+                .disable();
         // Add a filter to validate the tokens with every request
         httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
