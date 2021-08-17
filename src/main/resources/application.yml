@@ -6,10 +6,10 @@ spring:
     username: root
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
+    database-platform: org.hibernate.dialect.MySQL5Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
 
   http:
-    port: 8081
+    port: 8080
